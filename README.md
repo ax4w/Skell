@@ -1,4 +1,3 @@
 # Skell
 
-Skell is a simply discord bot written in Haskell.
-I used it more or less to practice my Haskell skills :D
+Skell is built using ![Discord-Haskell](https://github.com/discord-haskell/discord-haskell)
