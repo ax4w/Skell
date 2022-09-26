@@ -1,0 +1,46 @@
+cabal-version:      2.4
+name:               Skell
+version:            0.1.0.0
+build-type: Simple
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             0x3alex
+maintainer:         0x3alex
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files: CHANGELOG.md
+
+executable Skell
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules: 
+        Ping
+        Clear
+        Utility
+        GuildInfo
+        UserInfo
+        Help
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    ghc-options: -threaded
+    build-depends:    
+        base ^>=4.14.3.0
+        , discord-haskell ^>=1.15.3
+        , text
+        , unliftio ^>= 0.2.22.0
+        , transformers ^>= 0.5.6.2
+    hs-source-dirs:   app
+    default-language: Haskell2010
