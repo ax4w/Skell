@@ -22,9 +22,9 @@ exec m = do
         let synerr = R.CreateMessageDetailed (messageChannelId m) def {
             R.messageDetailedEmbeds = Just
                 [ def
-                    {   createEmbedTitle = "Wrong usage - Syntax: ** >clear <amount> **",
+                    {   createEmbedTitle = "Wrong usage - Syntax: ** >clear <amount(1-00)> **",
+                        createEmbedDescription = "This message also appears when you don't have enough permissions",
                         createEmbedColor = Just embedColor,
-                        createEmbedDescription = "The maximum amount is 100",
                         createEmbedFooterText = "If the provided span contains messages, which are too old, then the command will not be executed!"
                     }
                 ]
