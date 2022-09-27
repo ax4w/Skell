@@ -29,31 +29,26 @@ exec m = do
                     }
                 ]
             }
-        --msgMem <- messageAuthor m
         Just msgMem <- pure $ messageMember m
         Just guildid' <- pure $ messageGuildId m
-        --getUserRoles GuildMember ([Role])
-        if getArgCount m == 2 && isInt (getArg m 1) && argToInt m 1 <= 100 && argToInt m 1 >= 0 then do
-            ma <- runExceptT $ do
-                guild' <- ExceptT $ restCall (G.GetGuild guildid')
-                if any(> 0) (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) 0x0000000000002000) then do
-                    _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "eyes")
-                    threadDelay (2 * 10 ^ (6 :: Int))
-                    _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "white_check_mark")
-                    msgs <- ExceptT $  restCall (R.GetChannelMessages (messageChannelId m) (argToInt m 1, R.AroundMessage (messageId m)))
-                    _ <- ExceptT $ restCall (R.BulkDeleteMessage (messageChannelId m, map messageId msgs))
-                    return ()
-                else do
-                    _ <- ExceptT $ restCall $ err m
-                    return ()
+        ma <- runExceptT $ do
+            guild' <- ExceptT $ restCall (G.GetGuild guildid')
+            if getArgCount m == 2 && isInt (getArg m 1) && argToInt m 1 <= 100 && argToInt m 1 >= 0 
+                && any(> 0) (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) 0x0000000000002000) then do
+                _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "eyes")
+                threadDelay (2 * 10 ^ (6 :: Int))
+                _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "white_check_mark")
+                msgs <- ExceptT $  restCall (R.GetChannelMessages (messageChannelId m) (argToInt m 1, R.AroundMessage (messageId m)))
+                _ <- ExceptT $ restCall (R.BulkDeleteMessage (messageChannelId m, map messageId msgs))
+                return ()
+            else do
+                _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "warning")
+                _ <- ExceptT $ restCall synerr
+                return ()
 
-            case ma of
-                Left e -> void $ restCall $ err m
-                Right r -> return()
-
-        else do
-            void $ restCall (R.CreateReaction (messageChannelId m, messageId m) "warning")
-            void $ restCall synerr
+        case ma of
+            Left e -> void $ restCall $ err m
+            Right r -> return()
 
 
 
