@@ -7,14 +7,14 @@ import Discord.Types
     ( Message(messageId, messageChannelId, messageGuildId, messageAuthor, messageMember, messageMentions),
       CreateEmbed(createEmbedTitle, createEmbedDescription,
                   createEmbedImage, createEmbedFields, createEmbedThumbnail, createEmbedFooterText, createEmbedColor),
-      CreateEmbedImage(CreateEmbedImageUrl), Role (roleName), EmbedField (EmbedField), Guild (guildName, guildBanner, guildIcon, guildChannels, guildNSFWLevel, guildDescription, guildAfkTimeout, guildRoles), Channel (channelName), User (userName, userDiscrim, userIsBot, userMember, userId, userAvatar), GuildMember (memberJoinedAt, memberPermissions, memberUser, memberNick), GuildBan (guildBanUser, guildBanReason) )
+      CreateEmbedImage(CreateEmbedImageUrl), Role (roleName, rolePerms), EmbedField (EmbedField), Guild (guildName, guildBanner, guildIcon, guildChannels, guildNSFWLevel, guildDescription, guildAfkTimeout, guildRoles), Channel (channelName), User (userName, userDiscrim, userIsBot, userMember, userId, userAvatar), GuildMember (memberJoinedAt, memberPermissions, memberUser, memberNick), GuildBan (guildBanUser, guildBanReason) )
 import qualified Discord.Requests as R
 import Control.Monad (when, void)
 import qualified Data.Text as T
 import UnliftIO.Concurrent ( threadDelay )
 import qualified Discord.Internal.Rest.Guild as G
 import qualified Data.String as T
-import Utility ( renderBans, buildUserImgFromHash, validateRenderBans,embedColor, getUserRoles, selectGuildMemerFromMsg, selectUserFromMsg, err )
+import Utility ( renderBans, buildUserImgFromHash, validateRenderBans,embedColor, getUserRolesName, selectGuildMemerFromMsg, selectUserFromMsg, err, getUserRoles )
 import Data.Maybe
 import Control.Monad.Trans.Except
 
@@ -46,7 +46,7 @@ exec m = do
                               ) (Just True),
                               EmbedField "Roles" (
                                 T.intercalate "\n" (
-                                getUserRoles msgMem (guildRoles guild'))
+                                getUserRolesName msgMem (guildRoles guild'))
                               ) (Just False)
                               
                             ]

@@ -2,15 +2,17 @@
 module Utility where
 
 import Discord.Types
-    ( Message(messageContent, messageGuildId, messageAuthor, messageMentions, messageMentionRoles, messageMember, messageChannelId), Role (roleId, roleName), Guild (guildRoles), User (userDiscrim, userMember), GuildMember (GuildMember, memberPermissions, memberJoinedAt, memberRoles), GuildId, GuildBan (guildBanReason), UserId, DiscordColor (DiscordColorPurple), CreateEmbed (createEmbedTitle))
+    ( Message(messageContent, messageGuildId, messageAuthor, messageMentions, messageMentionRoles, messageMember, messageChannelId), Role (roleId, roleName, rolePerms), Guild (guildRoles), User (userDiscrim, userMember), GuildMember (GuildMember, memberPermissions, memberJoinedAt, memberRoles), GuildId, GuildBan (guildBanReason), UserId, DiscordColor (DiscordColorPurple), CreateEmbed (createEmbedTitle))
 import qualified Data.Text as T
 import Data.Char ( isDigit )
 import Data.Maybe (fromMaybe)
-import Data.String
+import Data.String ( IsString(fromString) )
 import Data.Text (Text, isPrefixOf)
 import qualified Discord.Internal.Rest.Guild as G
 import qualified Discord.Internal.Rest.Channel as R
-import Discord
+import Discord ( def )
+import Data.Bits ((.&.), Bits)
+import Data.Bool (bool)
 
 prefix :: Text
 prefix = ">"
@@ -50,14 +52,17 @@ buildUserImgFromHash g t
 
 
 fileEnding :: Text -> Text
-fileEnding t 
+fileEnding t
     | "a_" `isPrefixOf` t = ".gif"
     | otherwise = ".png"
 
 
 
-getUserRoles :: GuildMember -> [Role] -> [T.Text]
-getUserRoles g r= map (("@" <>). roleName) (filter(\x -> roleId x `elem` memberRoles g) r)
+getUserRolesName :: GuildMember -> [Role] -> [T.Text]
+getUserRolesName g r= map (("@" <>). roleName) (filter(\x -> roleId x `elem` memberRoles g) r)
+
+getUserRoles :: GuildMember -> [Role] -> [Role]
+getUserRoles g = filter(\x -> roleId x `elem` memberRoles g)
 
 hasMentions :: Message -> Bool
 hasMentions m = not (null (messageMentions m))
@@ -66,12 +71,12 @@ getFirstMention :: Message -> User
 getFirstMention m = head (messageMentions m)
 
 selectGuildMemerFromMsg :: Message -> Maybe GuildMember
-selectGuildMemerFromMsg m 
+selectGuildMemerFromMsg m
     | hasMentions m = userMember  $ getFirstMention m
     | otherwise = messageMember m
 
 selectUserFromMsg :: Message -> User
-selectUserFromMsg m 
+selectUserFromMsg m
     | hasMentions m =  getFirstMention m
     | otherwise = messageAuthor  m
 
@@ -80,4 +85,7 @@ err m = R.CreateMessageDetailed (messageChannelId m) def {
           R.messageDetailedEmbeds = Just
           [ def{createEmbedTitle = "Oh! Looks like an error occurred"}]
 }
-            
+
+hasUserPermissions::  [Role] -> Int -> [Int]
+hasUserPermissions [] _ = []
+hasUserPermissions (x:xs) n = [(.&.) (read (T.unpack $ rolePerms x) :: Int) n] <> hasUserPermissions xs n
