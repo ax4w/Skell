@@ -27,13 +27,13 @@ executable Skell
 
     -- Modules included in this executable, other than Main.
     other-modules: 
-        Ping
-        Clear
+        Cmds.Ping
+        Cmds.Clear
         Utility
-        GuildInfo
-        UserInfo
-        RoleInfo
-        Help
+        Cmds.GuildInfo
+        Cmds.UserInfo
+        Cmds.RoleInfo
+        Cmds.Help
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     ghc-options: -threaded

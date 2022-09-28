@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}  -- allows "strings" to be Data.Text
 
-module Help where
+module Cmds.Help where
 
 import Utility (prefix, embedColor)
 import Discord ( restCall, def, DiscordHandler )

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}  -- allows "strings" to be Data.Text
 
-module GuildInfo where
+module Cmds.GuildInfo where
 
 import Discord ( restCall, def, DiscordHandler )
 import Discord.Types

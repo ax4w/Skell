@@ -2,12 +2,12 @@
 
 module Main where
 
-import Ping ( exec )
-import Clear ( exec )
-import GuildInfo ( exec )
-import UserInfo ( exec )
-import RoleInfo ( exec )
-import Help ( exec )
+import qualified Cmds.Ping as Ping ( exec ) 
+import qualified Cmds.Clear as Clear ( exec )
+import qualified Cmds.GuildInfo as GuildInfo ( exec )
+import qualified Cmds.UserInfo as UserInfo ( exec )
+import qualified Cmds.RoleInfo as RoleInfo ( exec )
+import qualified Cmds.Help as Help( exec )
 import Utility (prefix)
 import Control.Monad (when, void)
 import qualified Data.Text as T

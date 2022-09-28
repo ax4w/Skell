@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}  -- allows "strings" to be Data.Text
 
-module RoleInfo where
+module Cmds.RoleInfo where
 
 
 import Discord ( restCall, def, DiscordHandler )
