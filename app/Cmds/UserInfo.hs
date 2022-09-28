@@ -15,8 +15,8 @@ import UnliftIO.Concurrent ( threadDelay )
 import qualified Discord.Internal.Rest.Guild as G
 import qualified Data.String as T
 import Utility ( renderBans, buildUserImgFromHash, validateRenderBans,embedColor, getUserRolesName, selectGuildMemerFromMsg, selectUserFromMsg, err, getUserRoles )
-import Data.Maybe
-import Control.Monad.Trans.Except
+import Data.Maybe ( fromMaybe )
+import Control.Monad.Trans.Except ( runExceptT, ExceptT(ExceptT) )
 
 exec:: Message -> DiscordHandler ()
 exec m = do

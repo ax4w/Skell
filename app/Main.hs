@@ -79,7 +79,7 @@ startHandler :: GuildId -> DiscordHandler ()
 startHandler server = do
   liftIO $ putStrLn "Started Skell"
 
-  let activity = def { activityName = "I am trying to be written in Haskell"
+  let activity = def { activityName = prefix <> "help"
                      , activityType = ActivityTypeWatching
                      }
   let opts = UpdateStatusOpts { updateStatusOptsSince = Nothing
