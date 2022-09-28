@@ -32,7 +32,9 @@ exec m = do
                               EmbedField (prefix <> T.pack "usrinfo")
                                 ("Some infos about the usr\nSyntax: **" <> prefix <> "usrinfo <optional @user>**")  (Just False),
                               EmbedField (prefix <> T.pack "clear") 
-                                ("Clear messages\nSytnax: **" <> prefix <> "clear <count(1-100)>**") (Just False)
+                                ("Clear messages\nSytnax: **" <> prefix <> "clear <count(1-100)>**") (Just False),
+                              EmbedField (prefix <> T.pack "roleinfo") 
+                                ("Role info\nSytnax: **" <> prefix <> "roleinfo <@role>**") (Just False)
                             ]
                 }
             ]
