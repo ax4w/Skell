@@ -34,7 +34,8 @@ exec m = do
         ma <- runExceptT $ do
             guild' <- ExceptT $ restCall (G.GetGuild guildid')
             if getArgCount m == 2 && isInt (getArg m 1) && argToInt m 1 <= 100 && argToInt m 1 >= 0 
-                && any(> 0) (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) 0x0000000000002000) then do
+                && (any(> 0) (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) 0x0000000000002000) || --Manage Messages
+                any(> 0) (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) 0x0000000000000008) {-Admin-}) then do
                 _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "eyes")
                 threadDelay (2 * 10 ^ (6 :: Int))
                 _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "white_check_mark")

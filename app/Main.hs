@@ -6,6 +6,7 @@ import Ping ( exec )
 import Clear ( exec )
 import GuildInfo ( exec )
 import UserInfo ( exec )
+import RoleInfo ( exec )
 import Help ( exec )
 import Utility (prefix)
 import Control.Monad (when, void)
@@ -94,6 +95,7 @@ eventHandler event = case event of
           | not (fromBot m) && isCommand m "clear" -> Clear.exec m
           | not (fromBot m) && isCommand m "gldinfo" -> GuildInfo.exec m
           | not (fromBot m) && isCommand m "usrinfo" -> UserInfo.exec m
+          | not (fromBot m) && isCommand m "roleinfo" -> RoleInfo.exec m
           | not (fromBot m) && isCommand m "help" -> Help.exec m
       _ -> return ()
 

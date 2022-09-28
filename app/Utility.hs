@@ -1,8 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}  -- allows "strings" to be Data.Text
+
 module Utility where
 
 import Discord.Types
-    ( Message(messageContent, messageGuildId, messageAuthor, messageMentions, messageMentionRoles, messageMember, messageChannelId), Role (roleId, roleName, rolePerms), Guild (guildRoles), User (userDiscrim, userMember), GuildMember (GuildMember, memberPermissions, memberJoinedAt, memberRoles), GuildId, GuildBan (guildBanReason), UserId, DiscordColor (DiscordColorPurple), CreateEmbed (createEmbedTitle))
+    ( Message(messageContent, messageGuildId, messageAuthor, messageMentions, messageMentionRoles, messageMember, messageChannelId), Role (roleId, roleName, rolePerms), Guild (guildRoles), User (userDiscrim, userMember), GuildMember (GuildMember, memberPermissions, memberJoinedAt, memberRoles), GuildId, GuildBan (guildBanReason), UserId, DiscordColor (DiscordColorPurple), CreateEmbed (createEmbedTitle), RoleId)
 import qualified Data.Text as T
 import Data.Char ( isDigit )
 import Data.Maybe (fromMaybe)
@@ -42,7 +43,7 @@ validateRenderBans t | not(null t) = t
 
 buildGuildImgFromHash :: GuildId -> Text -> Text
 buildGuildImgFromHash g t
-    | t == T.pack "" = T.pack ""
+    | t == "" = ""
     | otherwise = fromString "https://cdn.discordapp.com/icons/" <> T.pack (show g) <> T.pack "/" <> t <> fileEnding t
 
 buildUserImgFromHash :: UserId -> Text -> Text
@@ -69,6 +70,17 @@ hasMentions m = not (null (messageMentions m))
 
 getFirstMention :: Message -> User
 getFirstMention m = head (messageMentions m)
+
+hasRoleMentions :: Message -> Bool
+hasRoleMentions m = not (null (messageMentionRoles m))
+
+getFirstRoleMention :: Message -> RoleId
+getFirstRoleMention m = head (messageMentionRoles m)
+
+getRoleFromGuild :: Guild -> RoleId -> Role
+getRoleFromGuild g r = guildRoles  g !! f
+    where
+        f = length $ takeWhile(/= r)  $ roleId <$> guildRoles  g
 
 selectGuildMemerFromMsg :: Message -> Maybe GuildMember
 selectGuildMemerFromMsg m
