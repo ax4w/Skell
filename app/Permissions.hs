@@ -4,17 +4,18 @@ module Permissions where
 import Discord.Internal.Rest ( Role(rolePerms) )
 import Data.Text as T ( unpack )
 import Data.Bits ( Bits((.&.)) )
-import Data.Map (fromList)
 
-data TPerms = MANAGE_MESSAGES | ADMIN | NF deriving Eq
+data TPerms = MANAGE_MESSAGES | ADMIN | KICK | NF deriving Eq
 
 instance Enum TPerms where
     fromEnum MANAGE_MESSAGES = 0x0000000000002000
     fromEnum ADMIN = 0x0000000000000008
     fromEnum NF = 0
+    fromEnum KICK = 0x0000000000000002
 
     toEnum 0x0000000000002000 = MANAGE_MESSAGES
     toEnum 0x0000000000000008 = ADMIN
+    toEnum 0x0000000000000002 = KICK
     toEnum _ = NF
 
 hasUserPermissions::  [Role] -> TPerms -> Bool

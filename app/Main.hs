@@ -8,6 +8,7 @@ import qualified Cmds.GuildInfo as GuildInfo ( exec )
 import qualified Cmds.UserInfo as UserInfo ( exec )
 import qualified Cmds.RoleInfo as RoleInfo ( exec )
 import qualified Cmds.Help as Help( exec )
+import qualified Cmds.Kick as Kick( exec )
 import Utility (prefix)
 import Control.Monad (when, void)
 import qualified Data.Text as T
@@ -96,6 +97,7 @@ eventHandler event = case event of
           | not (fromBot m) && isCommand m "gldinfo" -> GuildInfo.exec m
           | not (fromBot m) && isCommand m "usrinfo" -> UserInfo.exec m
           | not (fromBot m) && isCommand m "roleinfo" -> RoleInfo.exec m
+          | not (fromBot m) && isCommand m "kick" -> Kick.exec m
           | not (fromBot m) && isCommand m "help" -> Help.exec m
       _ -> return ()
 

@@ -34,7 +34,9 @@ exec m = do
                               EmbedField (prefix <> T.pack "clear") 
                                 ("Clear messages\nSytnax: **" <> prefix <> "clear <count(1-100)>**") (Just False),
                               EmbedField (prefix <> T.pack "roleinfo") 
-                                ("Role info\nSytnax: **" <> prefix <> "roleinfo <@role>**") (Just False)
+                                ("Role info\nSytnax: **" <> prefix <> "roleinfo <@role>**") (Just False),
+                              EmbedField (prefix <> T.pack "kick") 
+                                ("Kick a user\nSytnax: **" <> prefix <> "kick <@user>**") (Just False)
                             ]
                 }
             ]

@@ -23,15 +23,23 @@ exec m = do
         let synerr = R.CreateMessageDetailed (messageChannelId m) def {
             R.messageDetailedEmbeds = Just
                 [ def
-                    {   createEmbedTitle = "Wrong usage - Syntax: ** " <> prefix <> "roleinfo <@role> **",
-                        createEmbedColor = Just embedColor
+                    {   createEmbedTitle = "Oops!",
+                        createEmbedColor = Just embedColor,
+                        createEmbedFields =
+                            [
+                              EmbedField "Syntax"
+                                ("Syntax: **" <> prefix <> "roleinfo <@role>**") (Just False),
+                              EmbedField "Needed Permissions"
+                                "No permissions needed" (Just False)
+                            ]
                     }
                 ]
             }
-        -- Just msgMem <- pure $ messageMember m
+
         Just guildid' <- pure $ messageGuildId m
         ma <- runExceptT $ do
-            if hasRoleMentions m then do
+            if hasRoleMentions m then 
+                do
                     guild' <- ExceptT $ restCall (G.GetGuild guildid')
                     _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "eyes")
                     threadDelay (2 * 10 ^ (2 :: Int))
@@ -57,10 +65,11 @@ exec m = do
                                     ]
                             })
                     return ()
-            else do
-                _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "warning")
-                _ <- ExceptT $ restCall synerr
-                return ()
+            else 
+                do
+                    _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "warning")
+                    _ <- ExceptT $ restCall synerr
+                    return ()
 
         case ma of
             Left e -> void $ restCall $ err m

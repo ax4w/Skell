@@ -30,6 +30,7 @@ executable Skell
         Utility
         Permissions
         Cmds.Ping
+        Cmds.Kick
         Cmds.Clear
         Cmds.GuildInfo
         Cmds.UserInfo

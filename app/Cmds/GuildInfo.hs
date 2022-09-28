@@ -7,7 +7,13 @@ import Discord.Types
     ( Message(messageId, messageChannelId, messageGuildId, messageAuthor),
       CreateEmbed(createEmbedTitle, createEmbedDescription,
                   createEmbedImage, createEmbedFields, createEmbedThumbnail, createEmbedFooterText, createEmbedColor),
-      CreateEmbedImage(CreateEmbedImageUrl), Role (roleName), EmbedField (EmbedField), Guild (guildName, guildBanner, guildIcon, guildChannels, guildNSFWLevel, guildDescription, guildAfkTimeout, guildEmojis), Channel (channelName), User (userName, userDiscrim, userIsBot, userMember), GuildMember (memberJoinedAt), GuildBan (guildBanUser, guildBanReason), Emoji (emojiName) )
+      CreateEmbedImage(CreateEmbedImageUrl), 
+      Role (roleName), EmbedField (EmbedField), 
+      Guild (guildName, guildBanner, guildIcon, guildChannels, guildNSFWLevel, guildDescription, guildAfkTimeout, guildEmojis), 
+      Channel (channelName), User (userName, userDiscrim, userIsBot, userMember), 
+      GuildMember (memberJoinedAt), 
+      GuildBan (guildBanUser, guildBanReason), 
+      Emoji (emojiName) )
 import qualified Discord.Requests as R
 import Control.Monad (when, void)
 import qualified Data.Text as T
@@ -15,8 +21,8 @@ import UnliftIO.Concurrent ( threadDelay )
 import qualified Discord.Internal.Rest.Guild as G
 import qualified Data.String as T
 import Utility ( renderBans, buildGuildImgFromHash, validateRenderBans,embedColor, err )
-import Data.Maybe
-import Control.Monad.Trans.Except
+import Data.Maybe ( fromMaybe )
+import Control.Monad.Trans.Except ( runExceptT, ExceptT(ExceptT) )
 import Data.Bool (bool)
 
 exec:: Message -> DiscordHandler ()
