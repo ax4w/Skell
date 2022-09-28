@@ -97,7 +97,3 @@ err m = R.CreateMessageDetailed (messageChannelId m) def {
           R.messageDetailedEmbeds = Just
           [ def{createEmbedTitle = "Oh! Looks like an error occurred"}]
 }
-
-hasUserPermissions::  [Role] -> Int -> [Int]
-hasUserPermissions [] _ = []
-hasUserPermissions (x:xs) n = [(.&.) (read (T.unpack $ rolePerms x) :: Int) n] <> hasUserPermissions xs n

@@ -12,9 +12,10 @@ import Control.Monad (when, void)
 import qualified Data.Text as T
 import UnliftIO.Concurrent ( threadDelay )
 import Data.Char ()
-import Utility ( getArgCount, getArg, isInt, argToInt,embedColor, err, getUserRoles, hasUserPermissions )
+import Utility ( getArgCount, getArg, isInt, argToInt,embedColor, err, getUserRoles )
 import Control.Monad.Trans.Except (runExceptT, ExceptT (ExceptT))
 import qualified Discord.Internal.Rest.Guild as G
+import Permissions
 
 
 exec:: Message -> DiscordHandler ()
@@ -33,9 +34,9 @@ exec m = do
         Just guildid' <- pure $ messageGuildId m
         ma <- runExceptT $ do
             guild' <- ExceptT $ restCall (G.GetGuild guildid')
-            if getArgCount m == 2 && isInt (getArg m 1) && argToInt m 1 <= 100 && argToInt m 1 >= 0 
-                && (any(> 0) (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) 0x0000000000002000) || --Manage Messages
-                any(> 0) (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) 0x0000000000000008) {-Admin-}) then do
+            if getArgCount m == 2 && isInt (getArg m 1) && argToInt m 1 <= 100 && argToInt m 1 >= 0
+                && (hasUserPermissions (getUserRoles msgMem (guildRoles guild')) MANAGE_MESSAGES ||
+                hasUserPermissions (getUserRoles msgMem (guildRoles guild')) ADMIN) then do
                 _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "eyes")
                 threadDelay (2 * 10 ^ (6 :: Int))
                 _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "white_check_mark")

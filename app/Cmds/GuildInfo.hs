@@ -7,7 +7,7 @@ import Discord.Types
     ( Message(messageId, messageChannelId, messageGuildId, messageAuthor),
       CreateEmbed(createEmbedTitle, createEmbedDescription,
                   createEmbedImage, createEmbedFields, createEmbedThumbnail, createEmbedFooterText, createEmbedColor),
-      CreateEmbedImage(CreateEmbedImageUrl), Role (roleName), EmbedField (EmbedField), Guild (guildName, guildBanner, guildIcon, guildChannels, guildNSFWLevel, guildDescription, guildAfkTimeout), Channel (channelName), User (userName, userDiscrim, userIsBot, userMember), GuildMember (memberJoinedAt), GuildBan (guildBanUser, guildBanReason) )
+      CreateEmbedImage(CreateEmbedImageUrl), Role (roleName), EmbedField (EmbedField), Guild (guildName, guildBanner, guildIcon, guildChannels, guildNSFWLevel, guildDescription, guildAfkTimeout, guildEmojis), Channel (channelName), User (userName, userDiscrim, userIsBot, userMember), GuildMember (memberJoinedAt), GuildBan (guildBanUser, guildBanReason), Emoji (emojiName) )
 import qualified Discord.Requests as R
 import Control.Monad (when, void)
 import qualified Data.Text as T
@@ -17,11 +17,12 @@ import qualified Data.String as T
 import Utility ( renderBans, buildGuildImgFromHash, validateRenderBans,embedColor, err )
 import Data.Maybe
 import Control.Monad.Trans.Except
+import Data.Bool (bool)
 
 exec:: Message -> DiscordHandler ()
 exec m = do
     Just guildid' <- pure $ messageGuildId m
-    
+
     --thanks to @qrpnxz#6636 on the FP-Discord for telling me about that runExceptT thing!
     ma <- runExceptT $ do
       guild' <- ExceptT $ restCall (G.GetGuild guildid')
@@ -34,7 +35,7 @@ exec m = do
               restCall (R.CreateMessageDetailed (messageChannelId m) def {
                     R.messageDetailedEmbeds = Just
                       [ def
-                        { createEmbedTitle = "Guild-Info for " <> guildName guild',
+                        { createEmbedTitle = guildName guild',
                           createEmbedColor = Just embedColor,
                           createEmbedDescription = fromMaybe (T.pack "") (guildDescription guild'),
                           createEmbedThumbnail = Just
@@ -47,11 +48,11 @@ exec m = do
                                 T.intercalate "\n" $
                                 validateRenderBans $
                                 renderBans $
-                                zip (map (userName . guildBanUser) gbans)(map guildBanReason gbans)
+                                zip (userName . guildBanUser <$> gbans)(guildBanReason <$> gbans)
                               ) (Just False),
                               EmbedField "Channels" (
                                 T.intercalate "\n" $
-                                map channelName gchannels
+                                filter(\x -> x /= "Text Channels" && x /= "Voice Channels") $ channelName <$> gchannels
                               ) (Just True),
                               EmbedField "Roles" (
                                 T.intercalate "\n@" $
@@ -59,11 +60,15 @@ exec m = do
                               ) (Just True),
                               EmbedField "AFK-Timeout" (
                                 T.pack (show $ guildAfkTimeout guild' `div` 60) <> T.pack " Minutes"
-                              ) (Just True)
+                              ) (Just True),
+                              EmbedField "Emojis" (
+                                (\x -> bool ( T.intercalate ", " $ (\y -> ":" <> y <> ":") <$> x) "No custom server emojis found" (null x)) $ emojiName <$> guildEmojis guild'
+                              ) (Just False)
                             ]
                         }
                       ]
               })
+
       return ()
     case ma of
       Left e -> void $ restCall $ err m

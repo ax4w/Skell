@@ -13,7 +13,7 @@ import Control.Monad (when, void)
 import qualified Data.Text as T
 import UnliftIO.Concurrent ( threadDelay )
 import Data.Char ()
-import Utility ( getArgCount, getArg, isInt, argToInt,embedColor, err, getUserRoles, hasUserPermissions, prefix, hasRoleMentions, getFirstMention, getFirstRoleMention, getRoleFromGuild )
+import Utility ( getArgCount, getArg, isInt, argToInt,embedColor, err, getUserRoles, prefix, hasRoleMentions, getFirstMention, getFirstRoleMention, getRoleFromGuild )
 import Control.Monad.Trans.Except (runExceptT, ExceptT (ExceptT))
 import qualified Discord.Internal.Rest.Guild as G
 
@@ -39,7 +39,7 @@ exec m = do
                             restCall (R.CreateMessageDetailed (messageChannelId m) def {
                                     R.messageDetailedEmbeds = Just
                                     [ def
-                                        { createEmbedTitle = "RoleInfo for " <> roleName (getRoleFromGuild guild' $ getFirstRoleMention m),
+                                        { createEmbedTitle = roleName (getRoleFromGuild guild' $ getFirstRoleMention m),
                                         createEmbedColor = Just $ roleColor (getRoleFromGuild guild' $ getFirstRoleMention m),
                                         createEmbedFields =
                                             [
