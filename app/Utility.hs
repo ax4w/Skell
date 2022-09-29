@@ -38,26 +38,24 @@ renderBans [] = []
 renderBans ((a,b):xs) = [fromString "User **" <> a <> fromString "** banned for Reason: **" <> b <> fromString "**"] <> renderBans xs
 
 validateRenderBans :: [Text] -> [Text]
-validateRenderBans t | not(null t) = t
-                    | otherwise = [T.pack "No Bans Recorded"]
+validateRenderBans t 
+    | not(null t) = t
+    | otherwise = [T.pack "No Bans Recorded"]
 
 buildGuildImgFromHash :: GuildId -> Text -> Text
 buildGuildImgFromHash g t
-    | t == "" = ""
+    | t == ""   = ""
     | otherwise = fromString "https://cdn.discordapp.com/icons/" <> T.pack (show g) <> T.pack "/" <> t <> fileEnding t
 
 buildUserImgFromHash :: UserId -> Text -> Text
 buildUserImgFromHash g t
-    | t == T.pack "" = T.pack "https://i.pinimg.com/736x/7c/8f/47/7c8f476123d28d103efe381543274c25.jpg"
-    | otherwise = fromString "https://cdn.discordapp.com/avatars/" <> T.pack (show g) <> T.pack "/" <> t <> fileEnding t
-
+    | t == T.pack ""    = T.pack "https://i.pinimg.com/736x/7c/8f/47/7c8f476123d28d103efe381543274c25.jpg"
+    | otherwise         = fromString "https://cdn.discordapp.com/avatars/" <> T.pack (show g) <> T.pack "/" <> t <> fileEnding t
 
 fileEnding :: Text -> Text
 fileEnding t
-    | "a_" `isPrefixOf` t = ".gif"
-    | otherwise = ".png"
-
-
+    | "a_" `isPrefixOf` t   = ".gif"
+    | otherwise             = ".png"
 
 getUserRolesName :: GuildMember -> [Role] -> [T.Text]
 getUserRolesName g r= map (("@" <>). roleName) (filter(\x -> roleId x `elem` memberRoles g) r)
