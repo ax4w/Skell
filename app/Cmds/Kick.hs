@@ -21,7 +21,7 @@ import qualified Data.String as T
 import Utility (embedColor, selectGuildMemerFromMsg, selectUserFromMsg, err, getUserRoles, hasMentions, getFirstMention, prefix )
 import Data.Maybe ()
 import Control.Monad.Trans.Except ( runExceptT, ExceptT(ExceptT) )
-import Permissions ( TPerms(KICK, ADMIN), hasUserPermissions )
+import Permissions (hasGuildMemberPermission, Permissions (KICK_MEMBERS, ADMINISTRATOR) )
 
 exec:: Message -> DiscordHandler ()
 exec m = do
@@ -41,12 +41,12 @@ exec m = do
                 ]
             }
     Just guildid' <- pure $ messageGuildId m
-    Just msgMem <- pure $ selectGuildMemerFromMsg m
+    Just msgMem <- pure $ messageMember  m
 
     ma <- runExceptT $ do
         guild' <- ExceptT $ restCall (G.GetGuild guildid')
         _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "eyes")
-        if ( hasUserPermissions (getUserRoles msgMem (guildRoles guild')) KICK || hasUserPermissions (getUserRoles msgMem (guildRoles guild')) ADMIN) 
+        if ( hasGuildMemberPermission guild' msgMem KICK_MEMBERS || hasGuildMemberPermission guild' msgMem ADMINISTRATOR)
             && hasMentions m  then 
                 do
                     threadDelay (2 * 10 ^ (2 :: Int))
@@ -57,6 +57,7 @@ exec m = do
         else 
             do
                 _ <- ExceptT $ restCall (R.CreateReaction (messageChannelId m, messageId m) "warning")
+                
                 _ <- ExceptT $ restCall synerr
                 return ()
     case ma of
