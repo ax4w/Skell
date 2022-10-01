@@ -24,7 +24,6 @@ exec m = do
 
     Just guildid' <- pure $ messageGuildId m
     Just msgMem <- pure $ selectGuildMemerFromMsg m
-
     --thanks to @qrpnxz#6636 on the FP-Discord for telling me about that runExceptT thing!
     ma <- runExceptT $ do
       guild' <- ExceptT $ restCall (G.GetGuild guildid')
