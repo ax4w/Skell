@@ -11,6 +11,7 @@ import Data.Bits ( Bits((.&.), shift) )
 import Data.Bool
 import Data.Maybe
 import Data.List
+import Text.Read (readMaybe)
 
 -- | If there is no such role on the guild return nothing
 --   otherwise return the role. Take the head of the list. List should always be one, because the ID is unique
@@ -65,8 +66,9 @@ data Permissions =
 -- | Check if a given role has the permission
 --   RolePerms need to be an int to be converted into its bits
 --   Bitwise & checks if rolePermission contains the perm
-hasRolePermission :: Role -> Permissions -> Bool
-hasRolePermission r p = (.&.) (read (T.unpack $ rolePerms r) :: Int) (shift 1 $ fromEnum p) > 0
+hasRolePermission :: Maybe Int -> Permissions -> Bool
+hasRolePermission r p = (.&.) (fromMaybe 0 r) (shift 1 $ fromEnum p) > 0
+
 
 
 -- | Check if any Role of an GuildMember has the needed permission
@@ -76,6 +78,6 @@ hasGuildMemberPermission :: Guild -> GuildMember -> Permissions -> Bool
 hasGuildMemberPermission g gm p = or $ go (memberRoles gm) g
   where
     go [] _ = []
-    go (x:xs) g = case roleIdToRole g x of
+    go (x:xs) _ = case roleIdToRole g x of
                     Nothing ->  [False] <> go xs g
-                    Just a ->   [a `hasRolePermission` p] <> go xs g
+                    Just a ->   [readMaybe (T.unpack (rolePerms a)) `hasRolePermission` p] <> go xs g
